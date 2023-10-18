@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Button, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 
 const Calculator = () => {
     const [input, setInput] = useState('');
     const [result, setResult] = useState('');
+    const [history, setHistory] = useState([]);
 
     const handleInput = (value) => {
         setInput(input + value);
@@ -16,8 +17,10 @@ const Calculator = () => {
 
     const calculate = () => {
         try {
+            const expression = `${input} = ${eval(input)}`;
             setResult(eval(input));
-            setInput('')
+            setHistory([...history, expression]);
+            setInput('');
         } catch (error) {
             setResult('Error');
         }
@@ -25,8 +28,16 @@ const Calculator = () => {
 
     return (
         <View style={styles.container}>
+            <ScrollView style={styles.history}>
+                {history.map((entry, index) => (
+                    <View key={index} style={styles.historyEntry}>
+                        <Text>{entry}</Text>
+                    </View>
+                ))}
+            </ScrollView>
             <Text style={styles.input} selectable={true}>{input}</Text>
-            <Text style={styles.result} selectable={true}>{result}</Text>
+            <View style={styles.resultBox}><Text style={styles.result} selectable={true}>{result}</Text><TouchableOpacity style={styles.buttonDelete} onPress={clear}><Text style={styles.buttonText}>C</Text></TouchableOpacity></View>
+
             <View style={styles.row}>
                 <TouchableOpacity style={styles.button} onPress={() => handleInput(7)}><Text style={styles.buttonText}>7</Text></TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={() => handleInput(8)}><Text style={styles.buttonText}>8</Text></TouchableOpacity>
@@ -46,7 +57,7 @@ const Calculator = () => {
                 <TouchableOpacity style={styles.button} onPress={() => handleInput('-')}><Text style={styles.buttonText}>-</Text></TouchableOpacity>
             </View>
             <View style={styles.row}>
-                <TouchableOpacity style={styles.button} onPress={clear}><Text style={styles.buttonText}>C</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => handleInput('.')}><Text style={styles.buttonText}>.</Text></TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={() => handleInput(0)}><Text style={styles.buttonText}>0</Text></TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={calculate}><Text style={styles.buttonText}>=</Text></TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={() => handleInput('+')}><Text style={styles.buttonText}>+</Text></TouchableOpacity>
@@ -65,13 +76,36 @@ const styles = StyleSheet.create({
     },
     input: {
         fontSize: 50,
-        marginBottom: 10,
+        marginBottom: 5,
+        paddingHorizontal: 10,
+        borderRadius: 8,
         textAlign: 'right',
+        backgroundColor: '#EB4C42',
+    },
+    resultBox: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     result: {
+        flex: 1,
         fontSize: 50,
-        marginBottom: 20,
+        paddingHorizontal: 10,
         textAlign: 'right',
+        backgroundColor: '#CC397B',
+        borderRadius: 8,
+    },
+    clearButton: {
+        width: '22%',
+        height: 85,
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 5,
+        backgroundColor: '#F07427',
+        borderRadius: 10,
+    },
+    clearButtonText: {
+        fontSize: 50,
     },
     row: {
         flexDirection: 'row',
@@ -86,8 +120,26 @@ const styles = StyleSheet.create({
         backgroundColor: '#F07427',
         borderRadius: 10,
     },
+    buttonDelete: {
+        width: '22%',
+        height: 68,
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 5,
+        backgroundColor: '#F07427',
+        borderRadius: 10,
+    },
     buttonText: {
         fontSize: 50,
+    },
+    history: {
+        maxHeight: 150,
+    },
+    historyEntry: {
+        backgroundColor: 'white',
+        padding: 5,
+        margin: 5,
+        borderRadius: 10,
     },
 });
 
