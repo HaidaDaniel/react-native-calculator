@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f397d2ca-a02d-4a12-81c4-c1d3c2de1122"
+      }
+    },
+    "owner": "virtusdno"
   }
 }
